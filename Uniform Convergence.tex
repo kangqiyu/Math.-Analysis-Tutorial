@@ -1,0 +1,378 @@
+%%& -job-name=title_notes
+
+\documentclass[10pt,xcolor=table,dvipsnames]{beamer}
+% \documentclass[handout,10pt,xcolor=table,dvipsnames]{beamer}
+
+
+\usepackage{handoutWithNotes}
+
+\DeclareMathOperator\arctanh{arctanh}
+\mode<presentation>
+{
+  %\usetheme[secheader]{Custom}
+	\usetheme[secheader]{NTU}
+  \setbeamercovered{invisible}
+  % or whatever (possibly just delete it)
+}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
+\usepackage{pgfpages}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{subfig}
+%\usepackage[labelformat=simple]{subfig}
+
+\newcommand{\VI}{\mathrm{VI}}
+%\setbeameroption{show notes on second screen}
+\newcommand{\tb}[1]{\textbf{#1}}
+\input{preamble_beamer.tex}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+%\bibliography{IEEEabrv,StringDefinitions,DecentDet,BibBooks,Tay,Social,Infection,IoT}
+%\bibliography{IEEEabrv,StringDefinitions,Tay,refs}
+%\addbibresource{IEEEabrv.bib}	
+%\addbibresource{StringDefinitions.bib}	
+%\addbibresource{adv_dnn.bib}	
+
+%\bibliography{\BIBLDIR/IEEEabrv,\BIBLDIR/StringDefinitions,\BIBLDIR/Privacy,\BIBLDIR/machine_learning,\BIBLDIR/DecentDet,\BIBLDIR/Optimization,\BIBLDIR/IoT,\BIBLDIR/Books}
+\def\BIBLDIR{./Bib}            % directory of code snippets
+%\bibliography{IEEEabrv,StringDefinitions,DecentDet,BibBooks,Tay,Social,Infection,IoT}
+%\bibliography{\BIBLDIR/IEEEabrv,\BIBLDIR/StringDefinitions,\BIBLDIR/adv_dnn}		
+\bibliography{IEEEabrv,StringDefinitions,adv_dnn}
+%\graphicspath{{./Figures}}
+%\addmediapath{{./Videos/}}
+
+
+
+\title[Uniform Convergence of Function Sequences/Series]
+{Uniform Convergence of Function Sequences/Series}    % Enter your title between curly braces
+\author[Kang Qiyu]{
+    Kang Qiyu
+}
+\institute{
+    Nanyang Technological University\\
+    50 Nanyang Ave, Singapore 639798 \\
+   kang0080@e.ntu.edu.sg\\
+}
+\date{Sep. 2023}                    % Enter the date or \today between curly braces
+
+\AtBeginSection[] % Do nothing for \section*
+{
+\begin{frame}<beamer>
+\frametitle{Outline}
+\tableofcontents[currentsection]
+\end{frame}
+}
+
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
+\begin{document}
+
+
+
+% Creates title page of slide show using above information
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%\begin{frame}{Rest of this talk ...}
+%\tableofcontents
+%\end{frame}
+
+
+%\section{Preliminaries}
+\begin{frame}{Motivation}
+\centering{Why do we care about function sequences/series?}
+\end{frame}
+
+\begin{frame}{Motivation}
+\vspace{-0.3cm}
+\begin{itemize} {\small 
+\item Stone-Weierstras theorem: can we ``uniformly'' well approximate an arbitrary continuous function $f$ over an interval using  polynomial sequence $\{P_n\}$?
+\begin{figure}[!htb]
+\centering
+% \vspace{-0.7cm}
+\includegraphics[width=0.5\textwidth]{Figures/swt.pdf}
+\end{figure}
+\pause
+    \item neural network approximation capabilities as width $\rightarrow \infty$
+\begin{figure}[!htb]
+\centering
+% \vspace{-0.7cm}
+\includegraphics[width=0.9\textwidth]{Figures/uni_app.png}
+% \label{fig:ecn}
+\end{figure}
+    \pause 
+    \item sequential estimation/learning: {\small $Y_1(\omega)=f_1(X_1(\omega))$, $Y_2(\omega)=f_2(X_1(\omega),X_2(\omega))$, $\ldots$. How does the estimator $Y_n(\omega)$ behave? Can we get an arbitrarily good estimation of some unknown r.v. $Y(\omega)$ or parameter asymptotically?}
+  \pause  \item numerical computation: E.g. numerically approximate incomplete gamma function 
+$\gamma(a, x) \equiv \int_0^x \mathrm{e}^{-t} t^{a-1} \mathrm{~d} t \approx x^a \sum_{n=0}^{N} \frac{(-1)^n x^n}{(a+n) n !}.$
+   \pause \item {\small network analysis (social, citation, collaboration): converge from increasing sized graphs to an asymptotic graphon (symmetric function $W:[0,1]^2 \mapsto[0,1]$)}}
+\end{itemize}
+
+\end{frame}
+
+\section{Definitions of Function Convergence: Pointwise vs. Uniform}
+
+\begin{frame}{Pointwise Convergence}
+We confine our attention to complex- or real-valued functions.
+\begin{Definition}[pointwise convergence]
+    Suppose $\left\{f_n\right\}, n=1,2,3, \ldots$, is a sequence of functions defined on a set $E$, and suppose that the sequence of numbers $\left\{f_n(x)\right\}$ {converges for every $x \in E$}. We can then define a limit function $f$, by
+\begin{align}
+f(x)=\lim _{n \rightarrow \infty} f_n(x) \quad(x \in E) .
+\end{align}
+We say that ``$\left\{f_n\right\}$ converges to $f$ \blue{pointwise} on $E$''.
+\end{Definition}
+\tb{summary:} 
+{\small $\left\{f_n\right\}$ converges to $f$ \blue{pointwise} on $E$
+iff
+$\lim _{n \rightarrow \infty} f_n(x)=f(x) \text{ for all } x \in E$.}
+\pause
+\begin{Remark}[Series]
+    {\ Similarly, if $\sum f_n(x)$ converges for \blue{$x \in E$}, and if we define the limit function  as 
+$f(x)=\sum_{n=1}^{\infty} f_n(x) \quad(x \in E).$
+We say that ``$\sum f_n$ converges to $f$ \blue{pointwise} on $E$''.}
+\end{Remark}
+\end{frame}
+
+\begin{frame}{Uniform Convergence}
+Motivation:  The rate of convergence is ``uniform'' across the entire domain.
+\begin{Definition}[uniform convergence]
+   We say that a sequence of functions $\left\{f_n\right\}, n=1,2,3, \ldots$, \blue{converges uniformly} on $E$ to a function $f$ if for every $\varepsilon>0$ there is an integer $N$ such that $n \geq N$ implies
+\begin{align}
+\left|f_n(x)-f(x)\right| \leq \varepsilon
+\end{align}
+for all $x \in E$.
+\end{Definition}
+\tb{summary:} $\left\{f_n\right\}$ converges to $f$ \blue{uniformly} on $E$
+iff $\forall \epsilon>0$, $\exists N$ s.t. $\sup_{x\in E} \left|f_n(x)-f(x)\right| \leq \varepsilon$ for all $n>N$.
+\pause
+\begin{Remark}[Series]
+    {\ Similarly, the series $\sum f_n(x)$ converges \blue{uniformly} on $E$ if the sequence $\left\{s_n\right\}$ of partial sums defined by
+$s_n(x)\coloneqq\sum_{i=1}^n f_i(x)$
+converges \blue{uniformly} on $E$.}
+\end{Remark}
+\end{frame}
+
+\begin{frame}{Comparison}
+\begin{enumerate}
+    \item \tb{pointwise convergence:} 
+{
+$\lim _{n \rightarrow \infty} f_n(x)=f(x) \text{ for all } x \in E$.}
+
+\emph{\small \tb{equivalent $\varepsilon$-$\delta$ description:} for every $x>0$, and for every $\varepsilon \in E$, there is an integer \blue{$N(\varepsilon,x)$}, depending on $\varepsilon$ and on $x$, s.t. $\left|f_n(x)-f(x)\right| \leq \varepsilon$ holds if $n \geq N$.}
+\pause
+\item\tb{uniform convergence:} \emph{\small for every $\varepsilon>0$ there is an integer \blue{$N(\varepsilon)$}, depending only on $\varepsilon$, s.t.
+$\left|f_n(x)-f(x)\right| \leq \varepsilon$ if $n\geq N$
+for all $x \in E$.}
+\end{enumerate}
+\pause
+\vspace{1cm}
+\begin{itemize}
+    \item \tb{Observation:} uniform convergence $\Rightarrow$ pointwise convergence.
+   \pause \item \tb{Question:}  uniform convergence $\Leftarrow$ pointwise convergence?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{uniform convergence $\not\Leftarrow$ pointwise convergence}
+\vspace{-0.3cm}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=0.6\textwidth]{Figures/exm1.pdf}
+\end{figure}
+\vspace{-0.3cm}
+Consider $\{f_n(x)\}$ defined on the interval $[0, 1]$ by:
+\begin{align*}
+f_n(x)= \begin{cases}n x & \text { for } 0 \leq x \leq \frac{1}{n} \\ 1 & \text { for } \frac{1}{n}<x \leq 1\end{cases}
+\end{align*}
+\tb{pointwisely convergent} to 
+\begin{align*}
+f(x)= \begin{cases}0 & \text { for } x=0 \\ 1 & \text { for } 0<x \leq 1\end{cases}
+\end{align*}
+\tb{but \blue{not} uniformly:}
+\begin{align*}
+\left|f_n\left(\frac{1}{2n^2}\right)-f\left(\frac{1}{2n^2}\right)\right|=\left|n \cdot \frac{1}{2n^2}-1\right|=1-\frac{1}{2n}\ge \frac{1}{2}
+\end{align*}
+% No matter how large $n$ becomes, this difference remains 1.
+\end{frame}
+
+\section{Interchange of Limit Processes (e.g. \blue{continuous}, \blue{differentiable}, or integrable)}
+
+\begin{frame}{Uniform Convergence and Continuity}
+\begin{Theorem}[Interchanging Two Limits]
+    Suppose $f_n \rightarrow f$ \blue{uniformly} on a set $E$ in a metric space. Let $x$ be a limit point of $E$, and assume the existence of $\lim _{t \rightarrow x} f_n(t)$ for all $n$, we have 
+\begin{align*}
+\lim _{t \rightarrow x} \lim _{n \rightarrow \infty} f_n(t)=\lim _{n \rightarrow \infty} \lim _{t \rightarrow x} f_n(t) .
+\end{align*}
+\end{Theorem}
+\pause
+\magenta{basic theorem $\Rightarrow$ theorems about continuous, differentiable. }
+
+\pause
+Proof Hint:
+ Let a $\varepsilon$ be given.\\ 
+Step 1: Define $A_n\coloneqq \lim _{t \rightarrow x} f_n(t)$. Uniform convergence $\Rightarrow$   $\exists N$ s.t.
+$\left|f_n(t)-f_m(t)\right| \leq \varepsilon$ $\forall n, m \geq N, \blue{\forall t \in E}$.
+It follows that
+$\left|A_n-A_m\right| \leq \varepsilon$, a Cauchy sequence. So, it converges to a limit, denoted by $A$.
+
+\pause
+Step 2: $|f(t)-A| \leq\left|f(t)-f_n(t)\right|+\left|f_n(t)-A_n\right|+\left|A_n-A\right|$. Prove each item $< \varepsilon/3$ for large enough $n$ and for \( t \) sufficiently close to $x$. We therefore have $|f(t) - A| < \varepsilon$ when $t$ is sufficiently close to $x$.
+\pause
+\begin{Corollary}[Continuity Preserved under Uniform Convergence]
+ If $\left\{f_n\right\}$ is a sequence of \blue{continuous} functions on $E$, and if $f_n \rightarrow f$ \blue{uniformly} on $E$, then $f$ is \blue{continuous} on $E$.
+\end{Corollary}
+\end{frame}
+
+
+\begin{frame}{Example: pointwise convergence may lead to discontinuous}
+Let
+\begin{align*}
+f_n(x)=\frac{x^2}{\left(1+x^2\right)^n} \quad(x \text { real } ; n=0,1,2, \ldots),
+\end{align*}
+and consider
+\begin{align*}
+f(x)=\sum_{n=0}^{\infty} f_n(x)=\sum_{n=0}^{\infty} \frac{x^2}{\left(1+x^2\right)^n} .
+\end{align*}
+Since $f_n(0)=0$, we have $f(0)=0$. For $x \neq 0$, the last series is a convergent geometric series with sum $1+x^2$. Hence
+\begin{align*}
+f(x)= \begin{cases}0 & (x=0), \\ 1+x^2 & (x \neq 0).\end{cases}
+\end{align*}
+{\small So, a \blue{pointwise convergent} series of continuous functions may have a \blue{discontinuous} sum.}    
+\end{frame}
+
+\begin{frame}{Uniform Convergence and Differentiation}
+\begin{itemize}
+    \item $f_n \rightarrow f$ uniformly $\Rightarrow$ the convergence of $f_n^{\prime} \rightarrow f^{\prime}$?  No! \\
+    \pause
+\emph{\small Example: 
+\begin{align*}
+f_n(x)=\frac{\sin n x}{\sqrt{n}} \quad(x \text { real, } n=1,2,3, \ldots),
+\end{align*}
+and
+\begin{align*}
+f(x)=\lim _{n \rightarrow \infty} f_n(x)=0 .
+\end{align*}
+Then $f^{\prime}(x)=0$, and
+$f_n^{\prime}(x)=\sqrt{n} \cos n x,$
+so that $\left\{f_n^{\prime}\right\}$ does not converge to $f^{\prime}$. For instance, $f_n^{\prime}(0)=\sqrt{n} \rightarrow+\infty$ as $n \rightarrow \infty$, whereas $f^{\prime}(0)=0$.}
+\pause
+
+So we need \brown{stronger hypotheses} to get $f_n^{\prime} \rightarrow f^{\prime}$!
+\pause
+
+\begin{Theorem}[Interchanging Limit and Differentiation]
+    Suppose $\left\{f_n\right\}$ is a sequence of functions, differentiable on $[a, b]$ and such that $\left\{f_n\left(x_0\right)\right\}$ converges for some point $x_0$ on $[a, b]$. If \brown{$\left\{f_n^{\prime}\right\}$ converges uniformly} on $[a, b]$, then $\left\{f_n\right\}$ converges uniformly on $[a, b]$, to a function $f$, and
+\begin{align*}
+f^{\prime}(x)=\lim _{n \rightarrow \infty} f_n^{\prime}(x) \quad(a \leq x \leq b) .
+\end{align*}
+\end{Theorem}  
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Uniform Convergence and Differentiation}
+\vspace{-0.3cm}
+    Proof Hint: Let $\varepsilon>0$ be given.
+
+ \tb{Step 1:} Prove $\left\{f_n\right\} \rightarrow f$ uniformly:
+
+Uniform convergence of  $\left\{f_n^{\prime}\right\}$ leads to $\left|f_n^{\prime}(t)-f_m^{\prime}(t)\right|<\frac{\varepsilon}{2(b-a)} \quad(a \leq t \leq b)$ if $n, m \geq N_0$. 
+Apply the mean value theorem to $f_n-f_m$ and get 
+$\left|f_n(x)-f_m(x)-f_n(t)+f_m(t)\right| \leq \frac{|x-t| \varepsilon}{2(b-a)} \leq \frac{\varepsilon}{2}$.
+Finally use 
+$\left|f_n(x)-f_m(x)\right| \leq\left|f_n(x)-f_m(x)-f_n\left(x_0\right)+f_m\left(x_0\right)\right|+\left|f_n\left(x_0\right)-f_m\left(x_0\right)\right|<\varepsilon$ when $n,m>N_1$ for all $x$.
+
+\vspace{0.3cm}
+ \pause
+\tb{Step 2:} Prove $\left\{\phi_n\right\} \rightarrow \phi(t)$ uniformly:
+Fix a $x$ and define
+\begin{align*}
+\phi_n(t)=\frac{f_n(t)-f_n(x)}{t-x}, \quad \phi(t)=\frac{f(t)-f(x)}{t-x}
+\end{align*}
+for $a \leq t \leq b, t \neq x$.
+\vspace{0.3cm}
+ \pause
+ 
+\tb{Step 3:} Interchanging  limits:
+Since $\left\{f_n\right\}$ converges to $f$, it follows that
+\begin{align*}
+\lim _{n \rightarrow \infty} \phi_n(t)=\phi(t)
+\end{align*}
+uniformly for $a \leq t \leq b, t \neq x$.
+Theorem (Interchanging Two Limits) show that
+\begin{align*}
+\lim _{t \rightarrow x} \phi(t)=\lim _{n \rightarrow \infty} f_n^{\prime}(x) ;
+\end{align*}
+\end{frame} 
+
+\begin{frame}{Analytic Functions/Power Series}
+\vspace{-0.3cm}
+\begin{Lemma}[Uniform Convergence Test for Series]
+  {\small  Suppose $\left\{f_n\right\}$ is a sequence of functions defined on $E$, and suppose
+\begin{align*}
+\left|f_n(x)\right| \leq M_n \quad(x \in E, n=1,2,3, \ldots) .
+\end{align*}
+Then $\sum f_n$ \blue{converges uniformly} on $E$ if $\sum M_n$ converges.}
+\end{Lemma}
+\pause
+\vspace{-0.3cm}
+\begin{Theorem}
+{\small   Suppose the real-valued series
+$\sum_{n=0}^{\infty} c_n x^n$
+converges for $|x|<R$, and define
+\begin{align}
+f(x)=\sum_{n=0}^{\infty} c_n x^n \quad(|x|<R) .
+\end{align}
+Then the series converges \blue{uniformly} on $[-R+\varepsilon, R-\varepsilon]$, no matter which $\varepsilon>0$ is chosen. The function $f$ is continuous and differentiable in $(-R, R)$, and
+% \vspace{-0.3cm}
+\begin{align}
+f^{\prime}(x)=\sum_{n=1}^{\infty} n c_n x^{n-1} \quad(|x|<R) .
+\end{align} 
+}
+\end{Theorem}
+{\small Proof Hint: Use the above Lemma and ``Interchanging Limit and Differentiation''.}
+
+% Proof Let $\varepsilon>0$ be given. For $|x| \leq R-\varepsilon$, we have
+% \begin{align*}
+% \left|c_n x^n\right| \leq\left|c_n(R-\varepsilon)^n\right|
+% \end{align*}
+% and since
+% \begin{align*}
+% \sum c_n(R-\varepsilon)^n
+% \end{align*}
+% converges absolutely (every power series converges absolutely in the interior of its interval of convergence, by the root test), Theorem 7.10 shows the uniform convergence of (3) on $[-R+\varepsilon, R-\varepsilon]$.
+% Since $\sqrt[n]{n} \rightarrow 1$ as $n \rightarrow \infty$, we have
+% \begin{align*}
+% \limsup _{n \rightarrow \infty} \sqrt[n]{n\left|c_n\right|}=\limsup _{n \rightarrow \infty} \sqrt[n]{\left|c_n\right|}
+% \end{align*}
+% so that the series (4) and (5) have the same interval of convergence.
+% Since (5) is a power series, it converges uniformly in $[-R+\varepsilon$, $R-\varepsilon$ ], for every $\varepsilon>0$, and we can apply Theorem 7.17 (for series instead of sequences). It follows that (5) holds if $|x| \leq R-\varepsilon$.
+
+% But, given any $x$ such that $|x|<R$, we can find an $\varepsilon>0$ such that $|x|<R-\varepsilon$. This shows that (5) holds for $|x|<R$.
+% Continuity of $f$ follows from the existence of $f^{\prime}$ (Theorem 5.2).
+\end{frame}
+
+\begin{frame}{Post-Course Tasks and Recommended Readings}
+    \begin{itemize}
+        \item \blue{Self-write the complete proofs of discussed theorems.
+        \item Complete all assigned homework.}
+        \item Delve into Convergence Types: \( L_1 \) convergence, almost surely convergence, pointwise convergence, and uniform convergence.
+        \item Investigate the Approximation Capabilities of Neural Networks [1].
+        \item Explore the intricacies of Sequential Estimation [2].
+        \item Explore Neural Ordinary Differential Equations [3] and the associated existence and uniqueness of solutions: Picard–Lindelöf theorem [4] where the function sequence and uniform convergence are used in the proof.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{References}
+    \begin{itemize}
+        \item [1] Hornik, K., 1991. Approximation capabilities of multilayer feedforward networks. Neural networks, 4(2), pp.251-257.
+        \item [2] Chapter 3, Stochastic processes, detection, and estimation, MIT 6.432 Course Notes.
+      \item [3] Chen, Ricky TQ, et al. "Neural ordinary differential equations." Advances in neural information processing systems 31 (2018).
+        \item [4] Chapter II, Theorem 1.1., Hartman, P., 2002. Ordinary differential equations. Society for Industrial and Applied Mathematics.
+    \end{itemize}
+\end{frame}
+
+\end{document}
+
