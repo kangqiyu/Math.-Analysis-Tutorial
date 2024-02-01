@@ -1,6 +1,6 @@
 # Summary
 
-This repository hosts the course plan for "Introduction to Mathematical Analysis with Machine Learning". The course is structured to systematically explore core concepts, thereby enhancing students' capacity for analytical thinking. This approach empowers them to tackle complex mathematical problems and devise logical solutions effectively.
+This repository hosts the course plan for __"Introduction to Mathematical Analysis with Machine Learning"__. The course is structured to systematically explore core concepts, thereby enhancing students' capacity for analytical thinking. This approach empowers them to tackle complex mathematical problems and devise logical solutions effectively.
 
 Beyond focusing solely on pure mathematical analysis and proof techniques, this course adopts a more interdisciplinary approach, bridging mathematical concepts with machine learning techniques. Through case studies, discussions, and practical problem-solving sessions, students will gain insights into how foundational mathematics is integral to and influences the development of advanced machine learning algorithms and models.
 
